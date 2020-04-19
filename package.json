@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "babel src -d dest",
-    "start": "npm build node dest/eschool.js",
+    "start": "node dest/eschool.js",
     "dev": "babel-node dest/eschool.js",
     "postinstall": "npm run build",
     "type": "module"
