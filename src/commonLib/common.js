@@ -5,7 +5,6 @@
 */
 require('dotenv').config()
 const saltRounds = process.env.SALT_ROUNDS
-import bcrypt from 'bcrypt'
 import colors from 'colors'
 
 export default class Common {
@@ -121,14 +120,14 @@ export default class Common {
         @Param input ,hash_value       
     */
     encrypt(input) {
-        bcrypt.hash(input, 8, function (err, hash) {
-            // return the value generated from the input
-            if (err) {
-                console.log('Error in encryption of value')
-                return
-            }
-            return hash
-        });
+        // bcrypt.hash(input, 8, function (err, hash) {
+        //     // return the value generated from the input
+        //     if (err) {
+        //         console.log('Error in encryption of value')
+        //         return
+        //     }
+        //     return hash
+        // });
     }
     /* 
         @Function decrypt
@@ -137,9 +136,9 @@ export default class Common {
     */
     decrypt(input, hash_Value) {
 
-        bcrypt.compare(input, hash_Value).then(function (result) {
-            return result ? true : false
-        });
+        // bcrypt.compare(input, hash_Value).then(function (result) {
+        //     return result ? true : false
+        // });
     }
 
     getStandardResponse(status, message, data) {
@@ -180,13 +179,13 @@ export default class Common {
     validateOTP(receivedOTP, savedOTP) {
         if (!this.isEmpty(receivedOTP)) {
             // validate the OTP stored and currently filled
-            bcrypt.compare(receivedOTP, savedOTP, function (err, res) {
-                if (err) {
-                    console.log(colors.red('Error in validating the OTP'))
-                    return
-                }
-                return res ? true : false
-            });
+            // bcrypt.compare(receivedOTP, savedOTP, function (err, res) {
+            //     if (err) {
+            //         console.log(colors.red('Error in validating the OTP'))
+            //         return
+            //     }
+            //     return res ? true : false
+            // });
         }
         return false
     };

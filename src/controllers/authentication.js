@@ -13,7 +13,6 @@ require('dotenv').config()
 import express from 'express'
 let client = require('twilio')(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 import colors from 'colors'
-import bcrypt from 'bcrypt'
 import Common from '../commonLib/common'
 let common = new Common()
 
