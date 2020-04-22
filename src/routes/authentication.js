@@ -5,20 +5,24 @@
 */
 import express from 'express'
 let router = express.Router();
-import { ObjectID } from 'mongodb';
-import { json } from 'body-parser';
 import Authentication from '../controllers/authentication'
 let authentication = new Authentication()
 
-router.post('/sendMessage', (req, res) => {
+router.get('/getToken', (req, res) => {
 
-    authentication.sendMessage(req,res)
+    authentication.getToken(req , res)
 });
 
 
-router.post('sendMessage/validateOTP', (req, res) => {
+router.get('/validateToken', (req, res) => {
+    
+    authentication.validateToken(req , res)
+});
 
-    authentication.validateOTP(req,res)
+
+router.get('/login' , (req, res)=>{
+
+    authentication.validateUserCred(req , res)
 });
 
 

@@ -5,8 +5,6 @@
 */
 import express from 'express'
 let router = express.Router();
-import { ObjectID } from 'mongodb';
-import { json } from 'body-parser';
 import Student from '../controllers/students'
 let student = new Student()
 

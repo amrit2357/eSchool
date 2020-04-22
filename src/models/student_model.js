@@ -6,7 +6,7 @@
 
 import db_connect from './dbInit'
 export var student_model = {
-    "regisNumber" : "",
+    "userId" : "",
     "first_Name":"",
     "middle_Name":"",
     "last_Name":"",

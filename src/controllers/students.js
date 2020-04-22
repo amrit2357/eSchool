@@ -7,94 +7,93 @@ import express, { response } from 'express'
 let router = express.Router()
 import { student_model } from '../models/student_model'
 import { ObjectID } from 'mongodb'
+import to from 'await-to-js'
 import Common from '../commonLib/common'
 let common = new Common()
-
+import Users from './users'
+let users = new Users();
 export default class students {
+
     /*  
         Description : Add the student in the database
     */
-    async addStudent(req, res) {
-        try {
-            var std = student_model;
-            std._id = ObjectID()
-            std.regisNumber = Math.round(Math.random() * 100)
-            std.first_Name = req.body.first_Name;
-            std.last_Name = req.body.last_Name;
-            std.dob = req.body.dob;
-            std.address = req.body.address;
-            std.class = req.body.class;
-            std.section = req.body.section;
-            std.mobile_number = req.body.mobile_number;
-            std.created_At = new Date;
-            std.modified_At = new Date;
-            let db = req.app.locals.db;
-            /*
-                Generate one registration number according to the required then show it to the portal
-            */
-            let queryInsert = {
-                type: "student",
-                created_At: std.created_At,
-                modified_At: std.modified_At,
-                mobile_number: req.body.mobile_number,
-                password: common.encrypt(req.body.mobile_number)
+   async addStudent(req, res) {
+    try {
+        let std = await this.fetchUserDetails(req)
+
+        let userID = await users.getID(req, res , 3)
+        if (userID.status) {
+            std.userId = userID.data
+            console.log(std.userId)
+            let user = await users.userExists(req, res, std.userId);
+            if (!user.status) {
+                this.addUserDbCall(req, res , std)
+            } else {
+                res.json(common.getStandardResponse(false, "Error in adding Student. please try again later", user))
             }
-            let userfind = () => {
-                return new Promise((resolve, reject) => {
-                    db.collection("users").find({ mobile_number: req.body.mobile_number }).toArray((err, resp) => {
-                        if (err) {
-                            throw err
-                        }
-                        if (!common.isEmpty(resp)) {
-                            console.log(common.getStandardResponse(false, `User found with Mobile Number ${req.body.mobile_number}`, resp))
-                            reject(common.getStandardResponse(false, `User found with Mobile Number ${req.body.mobile_number}`, resp))
-                        } else {
-                            console.log(common.getStandardResponse(true, `User Not found with Mobile Number ${req.body.mobile_number}`, {}))
-                            resolve(common.getStandardResponse(true, `User Not found with Mobile Number ${req.body.mobile_number}`, {}))
-                        }
-                    })
-                })
-            }
-            let user = await userfind()
-            if (user.status) {
-                let setStudent = () => {
-                    return new Promise((resolve, reject) => {
-                        db.collection("students").insertOne(std, (err, response) => {
-                            if (err) throw err;
-                            if (common.isEmpty(response.ops)) {
-                                reject(common.getStandardResponse(false, `Student Information inserted failed`, {}))
-                            } else {
-                                console.log(common.getStandardResponse(true, `Student Information inserted`, response.ops))
-                                resolve(common.getStandardResponse(true, `Student Information inserted`, response.ops))
-                            }
-                        });
-                    })
-                }
-                let inStudent = await setStudent()
-                if (inStudent.status) {
-                    let setUser = () => {
-                        return new Promise((resolve, reject) => {
-                            db.collection("users").insertOne(queryInsert, (err, response) => {
-                                if (err) {
-                                    reject(common.getStandardResponse(false, `Error in inserting user`, err))
-                                }
-                                if (!common.isEmpty(response.ops)) {
-                                    console.log(common.getStandardResponse(true, `User Information inserted`, response.ops))
-                                    resolve(common.getStandardResponse(true, `User Information inserted`, response.ops))
-                                }
-                                reject(common.getStandardResponse(false, `User Information inserted failed`, {}))
-                            });
-                        })
-                    }
-                    let setUserDb = await setUser()
-                    res.json(setUserDb)
+        } else {
+            res.json(common.getStandardResponse(false, "Error in adding Student. please try again later", userID))
+        }
+    } catch (ex) {
+        res.json(common.getStandardResponse(false, "Exception in addStudent", ex.message))
+    }
+}
+    /*  
+        Description : fetch the user details to add to db ( addStudent 1.1)
+    */
+    async fetchUserDetails(req) {
+        let response = await common.encrypt(req.body.mobile_number)
+        var std = student_model
+        std._id = ObjectID()
+        std.first_Name = req.body.first_Name
+        std.last_Name = req.body.last_Name
+        std.dob = req.body.dob
+        std.address = req.body.address
+        std.class = req.body.class
+        std.section = req.body.section
+        std.mobile_number = req.body.mobile_number
+        std.created_At = new Date
+        std.modified_At = new Date
+        std.password = response
+        return std
+    }
+
+    /*  
+        Description : add user details to add to db ( addStudent 1.2)
+    */
+    async addUserDbCall(req, res , std) {
+        let db = req.app.locals.db
+        let queryInsert = {
+            type: 3,  // student
+            created_At: std.created_At,
+            modified_At: std.modified_At,
+            userId: std.userId,
+            mobile_number: std.mobile_number,
+            password: std.password
+        }
+        let error, stdInsert;
+        [error, stdInsert] = await to(db.collection("students").insertOne(std))
+        if (!common.isEmpty(error)) {
+            res.json(common.getStandardResponse(false, `Student Information inserted failed`, {}))
+        } else {
+            console.log(common.getStandardResponse(true, `Student Information inserted`, {}))
+            let err, setUser;
+
+            [err, setUser] = await to(db.collection("users").insertOne(queryInsert))
+            if (err) {
+                res.json(common.getStandardResponse(false, `Error in inserting user`, err))
+            } else {
+                console.log(common.getStandardResponse(true, `User Information inserted`, {}))
+                res.json(common.getStandardResponse(true, `User Information inserted`, {}))
+                // Increment the Top id
+                let idUpdate = await users.updateID(req, res, "3");
+                if (idUpdate.status) {
+                    console.log(idUpdate);
                 }
             }
-        } catch (ex) {
-            res.json(ex)
-            common.commonErrorCallback(ex)
         }
     }
+
     /* 
         Description : get the Time table for particular student with regisNumber
     */
@@ -179,71 +178,71 @@ export default class students {
             common.commonErrorCallback(ex)
         }
     }
-// ----------------------------------------------------------------------------- TO DO
+    // ----------------------------------------------------------------------------- TO DO
     /* 
         Description : get the total Attendance for particular Student
     */
-   async getStudentTotalAttendance(req, res) {
-    try {
-        let db = req.app.locals.db
-        let query = {
-            class: req.params.class,
-            section: req.params.section
-        }
-        let classStd = () => {
-            return new Promise((resolve, reject) => {
-                db.collection("students").find(query).toArray((err, student) => {
-                    if (err) throw err;
-                    if (!common.isEmpty(student)) {
-                        console.log(common.getStandardResponse(true, `Students of class ${query.class} ${query.section}`, student))
-                        resolve(common.getStandardResponse(true, `Students of class ${query.class} ${query.section}`, student))
-                    } else {
-                        reject(common.getStandardResponse(false, `No students found for ${query.class} ${query.section}`, {}))
-                    }
+    async getStudentTotalAttendance(req, res) {
+        try {
+            let db = req.app.locals.db
+            let query = {
+                class: req.params.class,
+                section: req.params.section
+            }
+            let classStd = () => {
+                return new Promise((resolve, reject) => {
+                    db.collection("students").find(query).toArray((err, student) => {
+                        if (err) throw err;
+                        if (!common.isEmpty(student)) {
+                            console.log(common.getStandardResponse(true, `Students of class ${query.class} ${query.section}`, student))
+                            resolve(common.getStandardResponse(true, `Students of class ${query.class} ${query.section}`, student))
+                        } else {
+                            reject(common.getStandardResponse(false, `No students found for ${query.class} ${query.section}`, {}))
+                        }
+                    })
                 })
-            })
+            }
+            let promiseStd = await classStd()
+            if (promiseStd.status) {
+                res.json(promiseStd)
+            }
+        } catch (ex) {
+            res.json(ex)
+            common.commonErrorCallback(ex)
         }
-        let promiseStd = await classStd()
-        if (promiseStd.status) {
-            res.json(promiseStd)
-        }
-    } catch (ex) {
-        res.json(ex)
-        common.commonErrorCallback(ex)
-    }
     }
 
-     /* 
-        Description : set the total Attendance for particular Student
+    /* 
+       Description : set the total Attendance for particular Student
     */
-   async setStudentTotalAttendance(req, res) {
-    try {
-        let db = req.app.locals.db
-        let query = {
-            class: req.params.class,
-            section: req.params.section
-        }
-        let classStd = () => {
-            return new Promise((resolve, reject) => {
-                db.collection("students").find(query).toArray((err, student) => {
-                    if (err) throw err;
-                    if (!common.isEmpty(student)) {
-                        console.log(common.getStandardResponse(true, `Students of class ${query.class} ${query.section}`, student))
-                        resolve(common.getStandardResponse(true, `Students of class ${query.class} ${query.section}`, student))
-                    } else {
-                        reject(common.getStandardResponse(false, `No students found for ${query.class} ${query.section}`, {}))
-                    }
+    async setStudentTotalAttendance(req, res) {
+        try {
+            let db = req.app.locals.db
+            let query = {
+                class: req.params.class,
+                section: req.params.section
+            }
+            let classStd = () => {
+                return new Promise((resolve, reject) => {
+                    db.collection("students").find(query).toArray((err, student) => {
+                        if (err) throw err;
+                        if (!common.isEmpty(student)) {
+                            console.log(common.getStandardResponse(true, `Students of class ${query.class} ${query.section}`, student))
+                            resolve(common.getStandardResponse(true, `Students of class ${query.class} ${query.section}`, student))
+                        } else {
+                            reject(common.getStandardResponse(false, `No students found for ${query.class} ${query.section}`, {}))
+                        }
+                    })
                 })
-            })
+            }
+            let promiseStd = await classStd()
+            if (promiseStd.status) {
+                res.json(promiseStd)
+            }
+        } catch (ex) {
+            res.json(ex)
+            common.commonErrorCallback(ex)
         }
-        let promiseStd = await classStd()
-        if (promiseStd.status) {
-            res.json(promiseStd)
-        }
-    } catch (ex) {
-        res.json(ex)
-        common.commonErrorCallback(ex)
-    }
     }
 
 }

@@ -4,12 +4,18 @@
     Description : Control all the modules related to Common
 */
 require('dotenv').config()
-const saltRounds = process.env.SALT_ROUNDS
 import colors from 'colors'
+import bcrypt from 'bcryptjs'
 
 export default class Common {
 
     constructor() { }
+
+    userType = [
+        { typeId: 1, type: "admin" },
+        { typeId: 2, type: "teacher" },
+        { typeId: 3, type: "student" }
+    ]
 
     timeslots = ["7-8", "9-10", "10-11", "11-12", "12-1", "1-2", "2-3", "3-4", "4-5"]
 
@@ -102,7 +108,23 @@ export default class Common {
             "subsection": ["A", "B", "C"]
         }
     ]
-    
+
+    /*
+        @Function invoke
+        @Description : return the promise result
+        @Param inputs       
+    */
+   invoke(promise){
+       return promise.then((res)=>{
+        if(res){
+            return [null , res]
+        }
+       }).catch((err)=>{
+            return [err , null]
+       })
+   }
+
+
     /*
         @Function isEmpty
         @Description : Check the value is not empty ,null ,undefined
@@ -116,31 +138,34 @@ export default class Common {
     }
     /* 
         @Function encrypt
-        @Description : encrypt the given value using bcrypt npm
-        @Param input ,hash_value       
+        @Description : encrypt the given value using bcrypt npm     
     */
-    encrypt(input) {
-        // bcrypt.hash(input, 8, function (err, hash) {
-        //     // return the value generated from the input
-        //     if (err) {
-        //         console.log('Error in encryption of value')
-        //         return
-        //     }
-        //     return hash
-        // });
+    async encrypt(input) {
+        try {
+            let hash = bcrypt.hashSync(input, 10);
+            return hash;
+        } catch (ex) {
+            console.log(this.commonErrorCallback(ex))
+            return this.commonErrorCallback(ex)
+        }
     }
     /* 
         @Function decrypt
-        @Description : decrypt the given value using bcrypt npm
-        @Param input ,hash_value       
+        @Description : decrypt the given value using bcrypt npm      
     */
-    decrypt(input, hash_Value) {
-
-        // bcrypt.compare(input, hash_Value).then(function (result) {
-        //     return result ? true : false
-        // });
+     async decrypt(input, hash_Value) {
+        try {
+            bcrypt.compare(input, hash_Value).then(function (result) {
+                return result ? true : false
+            });
+        } catch (ex) {
+            console.log(this.getStandardResponse(false, "Exception Occured", ex))
+        }
     }
-
+    /* 
+      @Function getStandardResponse
+      @Description : return the json in standard format
+  */
     getStandardResponse(status, message, data) {
         return {
             status: status,
@@ -148,7 +173,10 @@ export default class Common {
             data: data
         }
     }
-
+    /* 
+      @Function commonErrorCallback
+      @Description : return the json in common format 
+  */
     commonErrorCallback(err) {
         var data = 'Some Error Occured!';
         if (err && err.response && err.response.status && err.response.status == 400) {
@@ -160,13 +188,19 @@ export default class Common {
             data: data
         };
     }
-
+    /* 
+      @Function getDateString
+      @Description : get the date in string format   
+  */
     getDateString(date) {
 
         return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
     }
-
-    generateOTP() {
+    /* 
+      @Function generateOTP
+      @Description : generate the random otp  
+  */
+    async generateOTP() {
 
         var digits = '0123456789';
         let OTP = '';
@@ -175,8 +209,11 @@ export default class Common {
         }
         return OTP;
     }
-
-    validateOTP(receivedOTP, savedOTP) {
+    /* 
+      @Function validateOTP
+      @Description : validate the otp is valid or not      
+  */
+    async validateOTP(receivedOTP, savedOTP) {
         if (!this.isEmpty(receivedOTP)) {
             // validate the OTP stored and currently filled
             // bcrypt.compare(receivedOTP, savedOTP, function (err, res) {
@@ -189,4 +226,5 @@ export default class Common {
         }
         return false
     };
+
 }

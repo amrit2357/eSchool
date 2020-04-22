@@ -239,9 +239,7 @@ export default class attendance {
                 let timeAtten = (timeT).filter(res => {
                     return !common.isEmpty(res.attendance)
                 })
-
                 // Now have attendance id and table id and student id
-                let error, preCheck
                 let tablePresent = []
                 let promice = (response) => {
                     return new Promise((resolve, reject) => {
@@ -264,7 +262,7 @@ export default class attendance {
                     .then(response => {
                         response.forEach(value => {
                             let preOrNot = (value.present).filter(chk => {
-                                return chk.regisNumber == regNo
+                                return chk.userID == regNo
                             })
                             if (!common.isEmpty(preOrNot)) {
                                 finalResponse.push({
@@ -287,7 +285,6 @@ export default class attendance {
             common.commonErrorCallback(exception)
         }
     }
-
     /* 
     Description : get the attendance for particular Student req( class , section ) by parents
     */
@@ -333,7 +330,7 @@ export default class attendance {
                     .then(response => {
                         response.forEach(value => {
                             let preOrNot = (value.present).filter(chk => {
-                                return chk.regisNumber == regNo
+                                return chk.userID == regNo
                             })
                             if (!common.isEmpty(preOrNot)) {
                                 finalResponse.push({
@@ -356,11 +353,10 @@ export default class attendance {
             common.commonErrorCallback(exception)
         }
     }
-
     /* 
     Description : get the attendance for particular Student req( class , section , timeslot) by parents / teachers
     */
-   async getStudentAttendanceTimeslot(req, res) {
+    async getStudentAttendanceTimeslot(req, res) {
     try {
         let db = req.app.locals.db
         let queryTimeTable = {
@@ -402,7 +398,7 @@ export default class attendance {
                 .then(response => {
                     response.forEach(value => {
                         let preOrNot = (value.present).filter(chk => {
-                            return chk.regisNumber == regNo
+                            return chk.userID == regNo
                         })
                         if (!common.isEmpty(preOrNot)) {
                             finalResponse.push({
@@ -424,6 +420,6 @@ export default class attendance {
         res.json(common.getStandardResponse(false, exception, {}))
         common.commonErrorCallback(exception)
     }
-}
+   }
 
 }

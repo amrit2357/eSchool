@@ -5,7 +5,7 @@
 */
 import db_connect from './dbInit'
 export let teacher_model = {
-    "regisNumber" : "",
+    "userId" : "",
     "first_Name": "",
     "subject" : "",
     "middle_Name": "",
@@ -14,5 +14,6 @@ export let teacher_model = {
     "address": "",
     "created_At": "",
     "modified_At": "",
-    "mobile_Number": ""
+    "mobile_Number": "",
+    "password" : ""
 }
