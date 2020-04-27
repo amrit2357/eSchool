@@ -9,13 +9,11 @@ import bcrypt from 'bcryptjs'
 
 export default class Common {
 
-    constructor() { }
-
-    userType = [
-        { typeId: 1, type: "admin" },
-        { typeId: 2, type: "teacher" },
-        { typeId: 3, type: "student" }
-    ]
+    userType = {  
+        typeAdmin: "1",
+        typeTeacher : "2",
+        typeStudent : "3"
+    }
 
     timeslots = ["7-8", "9-10", "10-11", "11-12", "12-1", "1-2", "2-3", "3-4", "4-5"]
 
@@ -114,16 +112,13 @@ export default class Common {
         @Description : return the promise result
         @Param inputs       
     */
-   invoke(promise){
+   async invoke(promise){
        return promise.then((res)=>{
-        if(res){
             return [null , res]
-        }
-       }).catch((err)=>{
+        }).catch((err)=>{
             return [err , null]
        })
    }
-
 
     /*
         @Function isEmpty
@@ -167,6 +162,7 @@ export default class Common {
       @Description : return the json in standard format
   */
     getStandardResponse(status, message, data) {
+        console.log(`status : ${status} , message :${message} data : ${data}` )
         return {
             status: status,
             message: message,

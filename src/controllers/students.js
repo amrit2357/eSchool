@@ -3,8 +3,6 @@
     Module : Students controller
     Description : Control all the modules related to students
 */
-import express, { response } from 'express'
-let router = express.Router()
 import { student_model } from '../models/student_model'
 import { ObjectID } from 'mongodb'
 import to from 'await-to-js'

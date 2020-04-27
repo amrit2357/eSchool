@@ -114,13 +114,13 @@ export default class authentication {
         })
         .then(async (message) => {
 
-          [err, findUser] = await to(db.collection("users").findOne({ Mobile_Number: req.body.Mobile_Number }))
+          [err, findUser] = await common.invoke(db.collection("users").findOne({ Mobile_Number: req.body.Mobile_Number }))
           if (err) {
             console.error('Not able to Update the OTP in Database' + err);
             res.json(common.getStandardResponse(false, err.message, {}))
           } else {
             let upd, error
-            [error, upd] = await to(db.collection("users").updateOne({ Mobile_Number: req.body.Mobile_Number }, { $set: { "OTP": common.encrypt(currentOtp) } }))
+            [error, upd] = await common.invoke(db.collection("users").updateOne({ Mobile_Number: req.body.Mobile_Number }, { $set: { "OTP": common.encrypt(currentOtp) } }))
             if (!common.isEmpty(err)) {
               console.log('OTP Updated')
               res.json(common.getStandardResponse(false, "OTP Updated", {}))
@@ -140,7 +140,7 @@ export default class authentication {
 
       let db = req.app.locals.db
       let users, err
-      [err, users] = await to(db.collection("users").findOne({ Mobile_Number: req.body.Mobile_Number }))
+      [err, users] = await common.invoke(db.collection("users").findOne({ Mobile_Number: req.body.Mobile_Number }))
       if (err) {
         console.log(common.getStandardResponse(false, err.message, {}))
         res.json(common.getStandardResponse(false, err.message, {}));

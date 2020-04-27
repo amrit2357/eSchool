@@ -5,12 +5,7 @@
 */
 import express from 'express'
 let router = express.Router();
-import { ObjectID } from 'mongodb';
-import colors from "colors"
-import { json } from 'body-parser';
 import Attendance from '../controllers/attendence'
-import Common from '../commonLib/common'
-let common = new Common()
 let attendance = new Attendance()
 
 /*

@@ -20,9 +20,8 @@ import atten from './routes/attendance'
 import timetable from './routes/timeTable'
 import teachers from './routes/teachers'
 import authentication from './routes/authentication'
-
 import subjects from './controllers/subjects'
-import commonCont from './controllers/general'
+import general from './routes/generalRoute'
 
 
 let app = express()
@@ -39,7 +38,7 @@ app.use('/students', students)
 app.use('/subjects', subjects)
 app.use('/teachers', teachers)
 app.use('/tt', timetable)
-app.use('/getAll' , commonCont)
+app.use('/getAll' , general)
 app.use('/tt/atten', atten)
 app.use('/auth' , authentication)
 
