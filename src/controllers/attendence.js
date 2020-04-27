@@ -268,7 +268,6 @@ export default class attendance {
                 })
 
                 // Now have attendance id and table id and student id
-                let error, preCheck
                 let tablePresent = []
                 let promice = (response) => {
                     return new Promise((resolve, reject) => {

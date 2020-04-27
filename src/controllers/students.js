@@ -18,12 +18,10 @@ export default class students {
    async addStudent(req, res) {
     try {
         let std = await this.fetchUserDetails(req)
-
-        let userID = await users.getID(req, res , 3)
+        let userID = await users.getID(req, common.userType.typeStudent)
         if (userID.status) {
             std.userId = userID.data
-            console.log(std.userId)
-            let user = await users.userExists(req, res, std.userId);
+            let user = await users.userExists(req, std.userId , common.userType.typeStudent);
             if (!user.status) {
                 this.addUserDbCall(req, res , std)
             } else {
@@ -62,7 +60,7 @@ export default class students {
     async addUserDbCall(req, res , std) {
         let db = req.app.locals.db
         let queryInsert = {
-            type: 3,  // student
+            type: common.userType.typeStudent,  // student
             created_At: std.created_At,
             modified_At: std.modified_At,
             userId: std.userId,
@@ -70,21 +68,18 @@ export default class students {
             password: std.password
         }
         let error, stdInsert;
-        [error, stdInsert] = await to(db.collection("students").insertOne(std))
+        [error, stdInsert] = await common.invoke(db.collection("students").insertOne(std))
         if (!common.isEmpty(error)) {
             res.json(common.getStandardResponse(false, `Student Information inserted failed`, {}))
         } else {
-            console.log(common.getStandardResponse(true, `Student Information inserted`, {}))
             let err, setUser;
-
-            [err, setUser] = await to(db.collection("users").insertOne(queryInsert))
+            [err, setUser] = await common.invoke(db.collection("users").insertOne(queryInsert))
             if (err) {
                 res.json(common.getStandardResponse(false, `Error in inserting user`, err))
             } else {
-                console.log(common.getStandardResponse(true, `User Information inserted`, {}))
                 res.json(common.getStandardResponse(true, `User Information inserted`, {}))
                 // Increment the Top id
-                let idUpdate = await users.updateID(req, res, "3");
+                let idUpdate = await users.updateID(req, common.userType.typeStudent);
                 if (idUpdate.status) {
                     console.log(idUpdate);
                 }

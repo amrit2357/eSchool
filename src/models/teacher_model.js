@@ -3,7 +3,6 @@
     Module : teacher model
     Description : Schema of teachers
 */
-import db_connect from './dbInit'
 export let teacher_model = {
     "userId" : "",
     "first_Name": "",
@@ -14,6 +13,6 @@ export let teacher_model = {
     "address": "",
     "created_At": "",
     "modified_At": "",
-    "mobile_Number": "",
+    "mobile_number": "",
     "password" : ""
 }

@@ -10,9 +10,9 @@ import bcrypt from 'bcryptjs'
 export default class Common {
 
     userType = {  
-        typeAdmin: "1",
-        typeTeacher : "2",
-        typeStudent : "3"
+        typeAdmin: 1,
+        typeTeacher : 2,
+        typeStudent : 3
     }
 
     timeslots = ["7-8", "9-10", "10-11", "11-12", "12-1", "1-2", "2-3", "3-4", "4-5"]
@@ -162,7 +162,7 @@ export default class Common {
       @Description : return the json in standard format
   */
     getStandardResponse(status, message, data) {
-        console.log(`status : ${status} , message :${message} data : ${data}` )
+        console.log(`status : ${status} , message :${message} , data : ${JSON.stringify(data)}` )
         return {
             status: status,
             message: message,

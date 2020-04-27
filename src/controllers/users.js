@@ -18,19 +18,18 @@ export default class users {
     /* 
         Description : get the user info
     */
-    async userExists(req, res ,userID) {
+    async userExists(req, userID , type) {
         try {
             let db = req.app.locals.db
             let query = {
-                "userId": parseInt(userID)
+                "userId": parseInt(userID),
+                "type" : type
             }
-            let [err , res] = await to(db.collection("users").findOne(query))
+            let [err , res] = await common.invoke(db.collection("users").findOne(query))
             if (err || common.isEmpty(res)){
-                console.log(common.getStandardResponse(false, 'User Not found',{}))
                 return common.getStandardResponse(false, 'User Not found', {})
             } else {
-                console.log(common.getStandardResponse(true, 'User found', {}))
-                return common.getStandardResponse(true, 'User Not found', res)            
+                return common.getStandardResponse(true, 'User Found', res)            
             }      
         } catch (ex) {
             console.log(common.getStandardResponse(false , "Exception in userExists" , ex.message))
@@ -50,35 +49,30 @@ export default class users {
     }
 
 
-    async getID(req, res , typeId) {
+    async getID(req, typeId) {
         try {
             let db = req.app.locals.db
             let query = { type: `${typeId}` }
-            let [err, userID] = await to(db.collection("commonEntity").find(query).toArray())
+            let [err, userID] = await common.invoke(db.collection("commonEntity").find(query).toArray())
             if (common.isEmpty(err)) {
-                console.log(common.getStandardResponse(true, 'Returned Id', userID[0].ID))
                 return common.getStandardResponse(true, 'Returned Id', userID[0].ID)
             } else {  
-                console.log(common.getStandardResponse(false, 'Error in getting id', err))
                 return common.getStandardResponse(false, 'Error in getting id', err)
             }
         } catch (ex) {
-            console.log(colors.red(ex))
            return common.commonErrorCallback(ex)
         }
     }
 
-    async updateID(req , res , typeId){
+    async updateID(req , typeId) {
         try {
             let db = req.app.locals.db
             let query = { type: `${typeId}` }
-            let [err, userID] = await to(db.collection("commonEntity").find(query).toArray())
+            let [err, userID] = await common.invoke(db.collection("commonEntity").find(query).toArray())
             if (err) {
-                console.log(common.getStandardResponse(false, 'Error in getting id', err))
                 return common.getStandardResponse(false, 'Error in getting id', err)
             } else {
-                
-                [err, update] = await to(db.collection("commonEntity").updateOne(query , {$set : { ID : userID[0].ID + 1 }}))
+                [err, update] = await common.invoke(db.collection("commonEntity").updateOne(query , {$set : { ID : userID[0].ID + 1 }}))
                 if(err){
                     return common.getStandardResponse(false, 'Error in updating user ID', err)
                 }else{

@@ -17,7 +17,7 @@ router.post('/addTeacher', (req, res) => {
 /*  
     Description : get the time table for teacher for particular day
 */
-router.get('/:regisNumber/tt', (req, res) => {
+router.get('/:userId/tt', (req, res) => {
   
     teachers.getTimeTTeacher(req,res)
 })

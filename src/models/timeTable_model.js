@@ -3,7 +3,6 @@
     Module : timetable model
     Description : Schema of timTable
 */
-import db_connect from './dbInit'
 export var timeTable_model = {
     "date" : "",
     "timeSlot" : "",            // value
@@ -11,7 +10,7 @@ export var timeTable_model = {
     "class" : "", 
     "section" : "",
     "attendence" : "",          // Reference Id of attendance
-    "teacher" : "",             // Reference Id teacher
+    "teacherId" : "",             // Reference Id teacher
     "modifiedAt" : "",
     "modifiedBy" : "",
     "timestamp" : ""

@@ -3,7 +3,6 @@
     Module : attendence model
     Description : Schema of attendnce
 */
-import db_connect from './dbInit'
 export var attendence_model = {
     "date" : "",
     "timeSlot" : "",
