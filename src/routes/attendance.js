@@ -36,15 +36,16 @@ router.get('/student/timeslot/:studentId', (req, res) => {
 */
 router.get('/student/total/:studentId', (req, res) => {
 
-  attendance.getStudentAttendance(req, res)
+  attendance.getTotalStudentAttendance(req, res)
 })
 
-/*
-   Description : get the attendance for particular Student by parents / student
-*/
-router.get('/student/:studentId', (req, res) => {
 
-  attendance.getStudentAttendance(req, res)
+/*s
+  Description : get the total attendance for particular Student by parents / student
+*/
+router.get('/student/total/:studentId', (req, res) => {
+
+  attendance.getTotalStudentAttendance(req, res)
 })
 
 

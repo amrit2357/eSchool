@@ -3,14 +3,6 @@
     Module : Users controller
     Description : Control all the modules related to Users
 */
-import express from 'express'
-let router = express.Router();
-import db_connect from '../models/dbInit'
-import { timeTable_model } from '../models/timeTable_model'
-import { ObjectID } from 'mongodb';
-import colors from "colors"
-import to from 'await-to-js'
-import { json } from 'body-parser';
 import Common from '../commonLib/common'
 let common = new Common()
 
@@ -23,7 +15,7 @@ export default class users {
             let db = req.app.locals.db
             let query = {
                 "userId": parseInt(userID),
-                "type" : type
+                "type" : parseInt(type)
             }
             let [err , res] = await common.invoke(db.collection("users").findOne(query))
             if (err || common.isEmpty(res)){

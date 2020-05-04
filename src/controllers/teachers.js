@@ -56,6 +56,8 @@ export default class teachers {
         Description : add user details to add to db ( addStudent 1.2)
     */
     async addUserDbCall(req, res, teacher) {
+
+        try{
         let db = req.app.locals.db
         let queryInsert = {
             type: common.userType.typeTeacher,
@@ -68,7 +70,7 @@ export default class teachers {
         let error, teachInsert
         [error, teachInsert] = await common.invoke(db.collection("teachers").insertOne(teacher))
         if (!common.isEmpty(error)) {
-            res.json(common.getStandardResponse(false, `teacher Information inserted failed`, error))
+            res.json(common.getStandardResponse(false, `teacher Information inserted failed`, teacher))
         } else {
             let err, setUser;
             [err, setUser] = await common.invoke(db.collection("users").insertOne(queryInsert))
@@ -82,6 +84,9 @@ export default class teachers {
                 }
             }
         }
+    }catch(exception){
+        res.json(common.getStandardResponse(false , exception.message , {}))
+    }
     }
 
     /*  

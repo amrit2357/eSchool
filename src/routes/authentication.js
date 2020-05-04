@@ -20,7 +20,7 @@ router.get('/validateToken', (req, res) => {
 
 router.get('/login' , (req, res)=>{
 
-    authentication.validateUserCred(req , res)
+    authentication.validateUserCred(req , res , req.body.type)
 });
 
 module.exports = router

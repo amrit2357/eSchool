@@ -9,7 +9,7 @@ export var timeTable_model = {
     "subject" : "",             // Subject Code
     "class" : "", 
     "section" : "",
-    "attendence" : "",          // Reference Id of attendance
+    "attendance" : "",          // Reference Id of attendance
     "teacherId" : "",             // Reference Id teacher
     "modifiedAt" : "",
     "modifiedBy" : "",

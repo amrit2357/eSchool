@@ -12,10 +12,12 @@ router.post('/addStudent', (req, res) => {
 
     student.addStudent(req,res)  
 })
+
 router.get('/get/tt/:studentId', (req, res) => {
    
     student.getTimeTStudent(req,res)  
 })
+
 router.get('/:class/:section', (req, res) => {
 
     student.getStudentsClass(req,res)   

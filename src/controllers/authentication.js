@@ -23,11 +23,11 @@ export default class authentication {
   /* 
        Description : validate the User is Authenticated or not
    */
-  async validateUserCred(req, res) {
+  async validateUserCred(req, res , type) {
 
     try {
       let pass = req.body.password;
-      let userCheck = await users.userExists(req, res, req.body.userId);
+      let userCheck = await users.userExists(req, req.body.userId , type);
       // Check that user id is present in or not
       // Can be 1 .admin , 2 .teacher , 3 .student 
       if (userCheck.status) {

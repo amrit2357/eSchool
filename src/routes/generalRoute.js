@@ -15,19 +15,19 @@ let general = new gen()
     Function : getAllSubjects
     Description : get all the subjects
 */
-router.get('/subjects', middleWare.middlewareAuth, (req, res) => {
+router.get('/subjects', (req, res) => {
 
     console.log(`subjects Are :" + ${common.subjects}`)
     res.json(common.getStandardResponse(true, "subjects", common.subjects))
 })
 
-router.get('/classes', middleWare.middlewareAuth, (req, res) => {
+router.get('/classes', (req, res) => {
 
     console.log(`classes Are :" + ${common.classes}`)
     res.json(common.getStandardResponse(true, "classes", common.classes))
 })
 
-router.get('/timeslots', middleWare.middlewareAuth, (req, res) => {
+router.get('/timeslots', (req, res) => {
 
     console.log(`Time Slots Are :" + ${common.timeslots}`)
     res.json(common.getStandardResponse(true, "Available Time Slots", common.timeslots))
@@ -36,7 +36,7 @@ router.get('/timeslots', middleWare.middlewareAuth, (req, res) => {
 /*  Route : getAllStudents
     Description : Add the student in the database
 */
-router.get('/students', middleWare.middlewareAuth, (req, res) => {
+router.get('/students', (req, res) => {
     
     general.allStudents(req , res)
 })
@@ -45,7 +45,7 @@ router.get('/students', middleWare.middlewareAuth, (req, res) => {
     Description : all the teaches in the database
 */
 
-router.get('/teachers', middleWare.middlewareAuth, (req, res) => {
+router.get('/teachers', (req, res) => {
   
   general.allTeachers(req , res) 
 })
