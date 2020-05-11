@@ -3,9 +3,7 @@
     Module : student model
     Description : Schema of students
 */
-
-import db_connect from './dbInit'
-export var student_model = {
+export let student_model = {
     "userId" : "",
     "first_Name":"",
     "middle_Name":"",
@@ -17,5 +15,10 @@ export var student_model = {
     "created_At":"",
     "modified_At":"",
     "father_Mobile":"",
-    "mother_Mobile":""
+    "mother_Mobile":"",
+    "attendance" : {
+        "total" : 0,
+        "attended" : 0,
+        "percentage" : 0
+    }
 }

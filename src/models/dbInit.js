@@ -6,7 +6,6 @@
 import mongodb from 'mongodb'
 import dotenv from 'dotenv'
 import colors from 'colors'
-import app from '../eschool'
 var db_connect;
 dotenv.config()
 /* 

@@ -6,16 +6,41 @@
 require('dotenv').config()
 import colors from 'colors'
 import bcrypt from 'bcryptjs'
+import mongoDB from'mongodb'
 
 export default class Common {
 
-    constructor() { }
-
-    userType = [
-        { typeId: 1, type: "admin" },
-        { typeId: 2, type: "teacher" },
-        { typeId: 3, type: "student" }
-    ]
+    databaseTable = {
+        session: {
+            "2019": {
+                database: "eshool19",
+                Tables: {
+                    users: "users19",
+                    students: "students19",
+                    teachers: "teachers19",
+                    timeTable: "timeTable19",
+                    attendance: "attendance19",
+                    marks: "marks19",
+                }
+            },
+            "2020": {
+                database: "eshool20",
+                Tables: {
+                    users: "users20",
+                    students: "students20",
+                    teachers: "teachers20",
+                    timeTable: "timeTable20",
+                    attendance: "attendance20",
+                    marks: "marks20",
+                }
+            },
+        }
+    }
+    userType = {
+        typeAdmin: 1,
+        typeTeacher: 2,
+        typeStudent: 3
+    }
 
     timeslots = ["7-8", "9-10", "10-11", "11-12", "12-1", "1-2", "2-3", "3-4", "4-5"]
 
@@ -109,21 +134,35 @@ export default class Common {
         }
     ]
 
+       /*
+        @Function getTable
+        @Description : return the current table according to the session
+        @Param        
+    */
+    getTable(input){
+
+        let currentYear = new Date().getFullYear()
+        currentYear = databaseTable.session[currentYear.toString]
+        return currentYear.Tables[input]
+    }
+
+    getPercentage (denominator , numerator){
+        let percent =  (numerator / denominator ) * 100
+        return parseFloat(percent.toFixed(2))
+    }
+
     /*
         @Function invoke
         @Description : return the promise result
         @Param inputs       
     */
-   invoke(promise){
-       return promise.then((res)=>{
-        if(res){
-            return [null , res]
-        }
-       }).catch((err)=>{
-            return [err , null]
-       })
-   }
-
+    async invoke(promise) {
+        return promise.then((res) => {
+            return [null, res]
+        }).catch((err) => {
+            return [err, null]
+        })
+    }
 
     /*
         @Function isEmpty
@@ -153,7 +192,7 @@ export default class Common {
         @Function decrypt
         @Description : decrypt the given value using bcrypt npm      
     */
-     async decrypt(input, hash_Value) {
+    async decrypt(input, hash_Value) {
         try {
             bcrypt.compare(input, hash_Value).then(function (result) {
                 return result ? true : false
@@ -167,11 +206,19 @@ export default class Common {
       @Description : return the json in standard format
   */
     getStandardResponse(status, message, data) {
+        console.log(`status : ${status} , message :${message} , data : ${JSON.stringify(data)}`)
         return {
             status: status,
             message: message,
             data: data
         }
+    }
+       /* 
+      @Function getObjId
+      @Description : return the Object _id in standard format
+  */
+    getObjId(id){
+        return new mongoDB.ObjectID(id);
     }
     /* 
       @Function commonErrorCallback

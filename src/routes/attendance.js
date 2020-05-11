@@ -5,12 +5,7 @@
 */
 import express from 'express'
 let router = express.Router();
-import { ObjectID } from 'mongodb';
-import colors from "colors"
-import { json } from 'body-parser';
 import Attendance from '../controllers/attendence'
-import Common from '../commonLib/common'
-let common = new Common()
 let attendance = new Attendance()
 
 /*
@@ -41,15 +36,16 @@ router.get('/student/timeslot/:studentId', (req, res) => {
 */
 router.get('/student/total/:studentId', (req, res) => {
 
-  attendance.getStudentAttendance(req, res)
+  attendance.getTotalStudentAttendance(req, res)
 })
 
-/*
-   Description : get the attendance for particular Student by parents / student
-*/
-router.get('/student/:studentId', (req, res) => {
 
-  attendance.getStudentAttendance(req, res)
+/*s
+  Description : get the total attendance for particular Student by parents / student
+*/
+router.get('/student/total/:studentId', (req, res) => {
+
+  attendance.getTotalStudentAttendance(req, res)
 })
 
 

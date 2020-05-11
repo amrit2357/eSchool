@@ -9,6 +9,7 @@ export async function middlewareAuth(req, res , next) {
     try {
         authentication.validateToken(req , (response)=>{
             if (response.status) {
+                console.log(response.data + "-" + req.body._id)
                 if (req.body._id === response.data) {
                     return next()
                 } else {

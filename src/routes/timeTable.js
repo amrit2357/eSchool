@@ -31,7 +31,7 @@ router.post('/setTTClass', (req, res, next) => {
 /* 
     Description : set the teacher for time Table for particular class for given date
 */
-router.post('/setTTTeacher', async (req, res) => {
+router.post('/setTTteacher', async (req, res) => {
 
     timeTable.setTeacherTimeTable(req,res)
 })
