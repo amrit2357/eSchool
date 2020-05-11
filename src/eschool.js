@@ -20,8 +20,9 @@ import atten from './routes/attendance'
 import timetable from './routes/timeTable'
 import teachers from './routes/teachers'
 import authentication from './routes/authentication'
-import subjects from './controllers/subjects'
+import subjects from './controllers/marks'
 import general from './routes/generalRoute'
+import marks from './routes/marks'
 
 
 let app = express()
@@ -37,6 +38,7 @@ app.use(express.static(path.join(__dirname, 'uploads')))
 app.use('/students', students)
 app.use('/subjects', subjects)
 app.use('/teachers', teachers)
+app.use('/marks' , marks)
 app.use('/tt', timetable)
 app.use('/getAll' , general)
 app.use('/tt/atten', atten)
